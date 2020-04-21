@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import {CommonModule} from '@angular/common';
-import { FrCarousel,Slide} from './fr-carousel.component';
+import { FrCarousel,FrSlide} from './fr-carousel.component';
 import {CustomEventManager} from './custom-events-manager';
 import { EventManager } from '@angular/platform-browser';
-
+export { FrCarouselConfig} from './fr-carousel-config';
 @NgModule({
-  declarations: [FrCarousel,Slide],
+  declarations: [FrCarousel,FrSlide],
   imports: [CommonModule
   ],
-  exports: [FrCarousel,Slide],
+  exports: [FrCarousel,FrSlide],
   providers:[{provide: EventManager,useClass:CustomEventManager}]
 })
 export class FrCarouselModule { }

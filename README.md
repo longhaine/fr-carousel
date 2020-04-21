@@ -41,7 +41,7 @@ export class  AppModule  {
 	</ng-template>
 </fr-carousel>
 ```
-## fr-carousel
+## FrCarousel
 #### selector: `fr-carousel`
 ### Inputs
 
@@ -60,10 +60,18 @@ export class  AppModule  {
 | `pause` |`pause()`  => void <br/>Pauses cycling through the slides.
 | `cycle` |`cycle()`  => void <br/>Restarts cycling through the slides from left to right.
 
-## Slide
-### selector: `ng-template[Slide]`
+## FrSlide
+### selector: `ng-template[FrSlide]`
 ### Inputs
 
 | Input | Type | Description|
 | :---  |     :---:  |  :--- 
 | `id` |`string` |Slide id that must be unique for the entire document.<br/>If not provided, will be generated in the  `fr-slide-x`  format.
+
+## FrCarouselConfig
+
+A configuration service for the FrCarousel component.
+
+You can inject this service, typically in your root component, and customize its properties to provide default values for all carousels used in the application.
+
+`interval` `keyboard` `pauseOnHover` `showNavigationArrows` `showNavigationIndicators`

@@ -1,10 +1,11 @@
 import { Component,Input, TemplateRef, Directive, ContentChildren, QueryList, AfterContentInit,AfterViewChecked, AfterViewInit,NgZone, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import { BehaviorSubject, combineLatest, NEVER, Subject, timer } from 'rxjs';
 import { map, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
+import { FrCarouselConfig } from './fr-carousel-config';
 let slideId = 0;
 
-@Directive({selector: 'ng-template[Slide]'})
-export class Slide{
+@Directive({selector: 'ng-template[FrSlide]'})
+export class FrSlide{
   @Input() id = `fr-slide-${slideId++}`;
   
   constructor(public templateRef:TemplateRef<any>){}
@@ -55,22 +56,28 @@ export class Slide{
   styleUrls: ['./fr-carousel.component.css']
 })
 export class FrCarousel implements AfterContentInit,AfterViewInit,AfterViewChecked,OnDestroy{
-  @ContentChildren(Slide) slides: QueryList<Slide>;
+  @ContentChildren(FrSlide) slides: QueryList<FrSlide>;
   @Input() showNavigationArrows:boolean = true;
   @Input() showNavigationIndicators:boolean = true;
   @Input() keyboard:boolean = true;
   constructor(private ngZone:NgZone,
-  private cd:ChangeDetectorRef) {
+  private cd:ChangeDetectorRef,
+  config: FrCarouselConfig) {
+    this.keyboard = config.keyboard;
+    this.interval = config.interval;
+    this.pauseOnHover = config.pauseOnHover;
+    this.showNavigationArrows = config.showNavigationArrows;
+    this.showNavigationIndicators = config.showNavigationIndicators;
   }
   private _destroy$ = new Subject<void>();
   private _pause$ = new BehaviorSubject(false);
   private _pauseOnHover$ = new BehaviorSubject(true);
-  private _interval$ = new BehaviorSubject(5000);
+  private _interval$ = new BehaviorSubject(0);
   private _mouseHover$ = new BehaviorSubject(false);
   private _isEventLegal$ = new BehaviorSubject(false);
   private _slidesChanged$ = new BehaviorSubject(false);
   private _animating$ = new BehaviorSubject(false);
-  private _slides:Slide[];
+  private _slides:FrSlide[];
   private _transition:string = "left .3s";
   private _active$:Element = null;
   private _prev$:Element;
