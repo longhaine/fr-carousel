@@ -30,13 +30,13 @@ export class  AppModule  {
 
 ```
 <fr-carousel>
-	<ng-template Slide>
+	<ng-template FrSlide>
 		...
 	</ng-template>
-	<ng-template Slide>
+	<ng-template FrSlide>
 		...
 	</ng-template>
-	<ng-template Slide>
+	<ng-template FrSlide>
 		...
 	</ng-template>
 </fr-carousel>
