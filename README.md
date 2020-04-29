@@ -2,6 +2,9 @@
 
 Fr-Carousel is a friendly angular carousel component and it supports swipe feature for touch devices.
 
+## Demo
+
+https://longhaine.github.io/fr-demos/fr-carousel
 
 ## Installation
 
