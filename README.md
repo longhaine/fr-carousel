@@ -53,7 +53,8 @@ export class  AppModule  {
 | `showNavigationArrows` |`boolean` | `true` |if `true`, 'previous' and 'next' navigation arrows will be visible on the slide.
 | `showNavigationIndicators` | `boolean` |`true`|If `true`, navigation indicators at the bottom of the slide will be visible.   |
 |`keyboard`|`boolean`|`true`|If `true`, allows to interact with carousel using keyboard 'arrow left' and 'arrow right'.
-|`interval`|`boolean`|`5000`|Time in milliseconds before the next slide is shown. Note: if the value is `less than` `500` then it will be set as `500`.|
+|`interval`|`number`|`5000`|Time in milliseconds before the next slide is shown. <br/>Note: if `animationDuration` is `greater than` `0` then `interval` will `depends on` it, that means the value of `interval` `has to be greater than or equal to` `animationDuration` value if the value of `animationDuration` is `greater than` `0`.|
+|`animationDuration`|`number`|`500`|Time in milliseconds of sliding animation.|
 |`pauseOnHover`|`boolean`|`true`|If `true`, will pause slide switching when mouse cursor hovers the slide.|
 ### Methods
 | Method| Description|
@@ -77,4 +78,4 @@ A configuration service for the FrCarousel component.
 
 You can inject this service, typically in your root component, and customize its properties to provide default values for all carousels used in the application.
 
-`interval` `keyboard` `pauseOnHover` `showNavigationArrows` `showNavigationIndicators`
+`interval` `animationDuration` `keyboard` `pauseOnHover` `showNavigationArrows` `showNavigationIndicators`

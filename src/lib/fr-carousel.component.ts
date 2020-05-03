@@ -1,4 +1,4 @@
-import { Component,Input, TemplateRef, Directive, ContentChildren, QueryList, AfterContentInit,AfterViewChecked, AfterViewInit,NgZone, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
+import { Component,Input, TemplateRef, Directive, ContentChildren, QueryList, AfterContentInit,AfterViewChecked, AfterViewInit,NgZone, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef} from '@angular/core';
 import { BehaviorSubject, combineLatest, NEVER, Subject, timer } from 'rxjs';
 import { map, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
 import { FrCarouselConfig } from './fr-carousel-config';
@@ -62,12 +62,14 @@ export class FrCarousel implements AfterContentInit,AfterViewInit,AfterViewCheck
   @Input() keyboard:boolean = true;
   constructor(private ngZone:NgZone,
   private cd:ChangeDetectorRef,
-  config: FrCarouselConfig) {
+  config: FrCarouselConfig,
+  private elementRef: ElementRef) {
     this.keyboard = config.keyboard;
-    this.interval = config.interval;
     this.pauseOnHover = config.pauseOnHover;
     this.showNavigationArrows = config.showNavigationArrows;
     this.showNavigationIndicators = config.showNavigationIndicators;
+    this.timeRules(config.interval,config.animationDuration);
+    this.elementRef.nativeElement.style.setProperty('--animationDuration',`${this._animationDuration$}ms`);
   }
   private _destroy$ = new Subject<void>();
   private _pause$ = new BehaviorSubject(false);
@@ -77,6 +79,7 @@ export class FrCarousel implements AfterContentInit,AfterViewInit,AfterViewCheck
   private _isEventLegal$ = new BehaviorSubject(false);
   private _slidesChanged$ = new BehaviorSubject(false);
   private _animating$ = new BehaviorSubject(false);
+  private _animationDuration$ = 0;
   private _slides:FrSlide[];
   private _transition:string = "left .3s";
   private _active$:Element = null;
@@ -138,13 +141,33 @@ export class FrCarousel implements AfterContentInit,AfterViewInit,AfterViewCheck
 
   @Input()
   set interval(value:number){
-    if(value < 500){
-      value = 500; // minium is 500ms
-    }
-    this._interval$.next(value);
+    this.timeRules(value,this._animationDuration$);
   }
   get interval(){
     return this._interval$.value;
+  }
+  @Input()
+  set animationDuration(value:number){
+    this.timeRules(this._interval$.value,value);
+    this.elementRef.nativeElement.style.setProperty('--animationDuration',`${this._animationDuration$}ms`);
+  }
+  get animationDuration(){
+    return this._animationDuration$;
+  }
+  timeRules(interval:number,animationDuration:number){
+    if(interval < 0){
+      interval = 0;
+    }
+    if(animationDuration <= 0){
+      animationDuration = 0;
+    }
+    else{
+      if(interval < animationDuration){
+        interval = animationDuration;
+      }
+    }
+    this._interval$.next(interval);
+    this._animationDuration$ = animationDuration;
   }
 
   private initEssentialInfo(){
@@ -297,26 +320,26 @@ export class FrCarousel implements AfterContentInit,AfterViewInit,AfterViewCheck
     }
   }
   indicatorEvent(slideId:string){
-    setTimeout(()=>{
-      if(slideId != this._activeId){
-        this.removeStyleSlides();
-        let activePosition = this.findPosition(this._activeId);
-        let slidePosition = this.findPosition(slideId);
-        let oldActive = document.getElementById(this._activeId);
-        let newActive:Element = document.getElementById(slideId);
-        if(activePosition < slidePosition){
-          this.animateToLeft(oldActive,newActive);
-        }
-        else{
-          this.animateToRight(oldActive,newActive);
-        }
-        this.setSlideIds(slideId);
-        setTimeout(()=>{
-          this.removeCenterAnimation(oldActive);
-          this.removeSideAnimation(newActive);
-        },500); // animation duration .5s;
+    if(slideId != this._activeId && this._animating$.value == false){
+      this._animating$.next(true);
+      this.removeStyleSlides();
+      let activePosition = this.findPosition(this._activeId);
+      let slidePosition = this.findPosition(slideId);
+      let oldActive = document.getElementById(this._activeId);
+      let newActive:Element = document.getElementById(slideId);
+      if(activePosition < slidePosition){
+        this.animateToLeft(oldActive,newActive);
       }
-    },1);
+      else{
+        this.animateToRight(oldActive,newActive);
+      }
+      this.setSlideIds(slideId);
+      setTimeout(()=>{
+        this._animating$.next(false);
+        this.removeCenterAnimation(oldActive);
+        this.removeSideAnimation(newActive);
+      },this._animationDuration$);
+    }
   }
   arrowEvent(direction:string){
     if(this._animating$.value == false && this._isEventLegal$.value){
@@ -370,7 +393,7 @@ export class FrCarousel implements AfterContentInit,AfterViewInit,AfterViewCheck
       this.removeCenterAnimation(this._prev$);
       this.removeCenterAnimation(this._next$);
       this._animating$.next(false);
-    },500); // animation duration .5s;
+    },this._animationDuration$);
   }
   private animateToLeft(center:Element,side:Element){
     if(center != null){

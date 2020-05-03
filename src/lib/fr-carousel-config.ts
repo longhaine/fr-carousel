@@ -7,4 +7,5 @@ export class FrCarouselConfig {
   pauseOnHover = true;
   showNavigationArrows = true;
   showNavigationIndicators = true;
+  animationDuration = 500;
 }
