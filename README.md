@@ -53,7 +53,7 @@ export class  AppModule  {
 | `showNavigationArrows` |`boolean` | `true` |if `true`, 'previous' and 'next' navigation arrows will be visible on the slide.
 | `showNavigationIndicators` | `boolean` |`true`|If `true`, navigation indicators at the bottom of the slide will be visible.   |
 |`keyboard`|`boolean`|`true`|If `true`, allows to interact with carousel using keyboard 'arrow left' and 'arrow right'.
-|`interval`|`number`|`5000`|Time in milliseconds before the next slide is shown. <br/>Note: if `animationDuration` is `greater than` `0` then `interval` will `depends on` it, that means the value of `interval` `has to be greater than or equal to` `animationDuration` value if the value of `animationDuration` is `greater than` `0`.|
+|`interval`|`number`|`5000`|Time in milliseconds before the next slide is shown.|
 |`animationDuration`|`number`|`500`|Time in milliseconds of sliding animation.|
 |`pauseOnHover`|`boolean`|`true`|If `true`, will pause slide switching when mouse cursor hovers the slide.|
 ### Methods

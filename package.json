@@ -1,6 +1,6 @@
 {
   "name": "fr-carousel",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description":"Fr-Carousel is a friendly angular carousel component and it supports swipe feature for touch devices.",
   "author": "Huynh Long Hai",
   "repository":{

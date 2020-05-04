@@ -68,7 +68,8 @@ export class FrCarousel implements AfterContentInit,AfterViewInit,AfterViewCheck
     this.pauseOnHover = config.pauseOnHover;
     this.showNavigationArrows = config.showNavigationArrows;
     this.showNavigationIndicators = config.showNavigationIndicators;
-    this.timeRules(config.interval,config.animationDuration);
+    this._interval$.next(this.timeRules(config.interval));
+    this._animationDuration$ = this.timeRules(config.animationDuration);
     this.elementRef.nativeElement.style.setProperty('--animationDuration',`${this._animationDuration$}ms`);
   }
   private _destroy$ = new Subject<void>();
@@ -141,33 +142,25 @@ export class FrCarousel implements AfterContentInit,AfterViewInit,AfterViewCheck
 
   @Input()
   set interval(value:number){
-    this.timeRules(value,this._animationDuration$);
+    this._interval$.next(this.timeRules(value));
   }
   get interval(){
     return this._interval$.value;
   }
   @Input()
   set animationDuration(value:number){
-    this.timeRules(this._interval$.value,value);
+    this._animationDuration$ = this.timeRules(value);
     this.elementRef.nativeElement.style.setProperty('--animationDuration',`${this._animationDuration$}ms`);
   }
   get animationDuration(){
     return this._animationDuration$;
   }
-  timeRules(interval:number,animationDuration:number){
-    if(interval < 0){
-      interval = 0;
+
+  timeRules(value:number){
+    if(value < 0 || value == null || value == undefined){
+      value = 0;
     }
-    if(animationDuration <= 0){
-      animationDuration = 0;
-    }
-    else{
-      if(interval < animationDuration){
-        interval = animationDuration;
-      }
-    }
-    this._interval$.next(interval);
-    this._animationDuration$ = animationDuration;
+    return value;
   }
 
   private initEssentialInfo(){
